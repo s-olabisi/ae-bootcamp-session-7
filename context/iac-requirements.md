@@ -8,7 +8,9 @@
 
 ## Service Context
 
-<!-- Copilot: summarize what the todo-service is and how it will be hosted (from docs/project-overview.md) -->
+The **Todo Service** is a full-stack task management application consisting of a React SPA frontend (port 3000) and a stateless Express.js backend API (port 4000) with in-memory storage. It serves as the reference service for the Platform Engineering golden path lab.
+
+**Hosting:** The service will be containerized (Docker) and deployed to **AWS ECS Fargate** behind an Application Load Balancer (ALB), with logs and metrics collected via CloudWatch and Container Insights for observability.
 
 ---
 
@@ -16,11 +18,11 @@
 
 The todo-service is provisioned using the **Slalom PE Lab ECS App module** — a pre-built, policy-compliant Terraform module maintained by the platform team. You do **not** build this module; you configure the dev stack to call it.
 
-| Detail | Value |
-|--------|-------|
+| Detail            | Value                                                                     |
+| ----------------- | ------------------------------------------------------------------------- |
 | **Module source** | `github.com/Slalom/slalom-terraform-pe-lab-ecs-app//modules/todo-service` |
-| **Version** | `v1.0.4` |
-| **Docs** | https://github.com/Slalom/slalom-terraform-pe-lab-ecs-app/tree/v1.0.4 |
+| **Version**       | `v1.0.4`                                                                  |
+| **Docs**          | https://github.com/Slalom/slalom-terraform-pe-lab-ecs-app/tree/v1.0.4     |
 
 **What the module provisions:**
 
@@ -60,26 +62,26 @@ module "todo_service" {
 
 ### Module inputs reference
 
-| Variable | Type | Required | Description |
-|----------|------|----------|-------------|
-| `environment` | string | Yes | Must be `dev`, `staging`, or `prod` |
-| `create_networking` | bool | No (default: true) | Create VPC and subnets — set `true` for lab |
-| `alb_ingress_cidr` | string | Yes | CIDR allowed to reach the ALB. **Set this to your own local machine's public IP (e.g. `1.2.3.4/32`), not a Codespace IP** — the ALB security group will only allow traffic from this CIDR, so you must test the deployed load balancer from your local machine, not from a Codespace. |
-| `backend_image` | string | No (default: "") | Backend ECR image URI; empty = use module-managed ECR |
-| `frontend_image` | string | No (default: "") | Frontend ECR image URI; empty = use module-managed ECR |
-| `desired_count` | number | No (default: 1) | Number of ECS task replicas |
-| `cpu` | number | No (default: 256) | Fargate CPU units |
-| `memory` | number | No (default: 512) | Fargate memory in MiB |
-| `log_retention_in_days` | number | No (default: 30) | CloudWatch log retention |
-| `ecr_force_delete` | bool | No (default: false) | Allow `terraform destroy` to delete ECR repos |
+| Variable                | Type   | Required            | Description                                                                                                                                                                                                                                                                           |
+| ----------------------- | ------ | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `environment`           | string | Yes                 | Must be `dev`, `staging`, or `prod`                                                                                                                                                                                                                                                   |
+| `create_networking`     | bool   | No (default: true)  | Create VPC and subnets — set `true` for lab                                                                                                                                                                                                                                           |
+| `alb_ingress_cidr`      | string | Yes                 | CIDR allowed to reach the ALB. **Set this to your own local machine's public IP (e.g. `1.2.3.4/32`), not a Codespace IP** — the ALB security group will only allow traffic from this CIDR, so you must test the deployed load balancer from your local machine, not from a Codespace. |
+| `backend_image`         | string | No (default: "")    | Backend ECR image URI; empty = use module-managed ECR                                                                                                                                                                                                                                 |
+| `frontend_image`        | string | No (default: "")    | Frontend ECR image URI; empty = use module-managed ECR                                                                                                                                                                                                                                |
+| `desired_count`         | number | No (default: 1)     | Number of ECS task replicas                                                                                                                                                                                                                                                           |
+| `cpu`                   | number | No (default: 256)   | Fargate CPU units                                                                                                                                                                                                                                                                     |
+| `memory`                | number | No (default: 512)   | Fargate memory in MiB                                                                                                                                                                                                                                                                 |
+| `log_retention_in_days` | number | No (default: 30)    | CloudWatch log retention                                                                                                                                                                                                                                                              |
+| `ecr_force_delete`      | bool   | No (default: false) | Allow `terraform destroy` to delete ECR repos                                                                                                                                                                                                                                         |
 
 ### Module outputs to expose
 
-| Output | Source |
-|--------|--------|
-| `service_url` | `module.todo_service.service_url` |
-| `cluster_name` | `module.todo_service.cluster_name` |
-| `backend_ecr_repository_url` | `module.todo_service.backend_ecr_repository_url` |
+| Output                        | Source                                            |
+| ----------------------------- | ------------------------------------------------- |
+| `service_url`                 | `module.todo_service.service_url`                 |
+| `cluster_name`                | `module.todo_service.cluster_name`                |
+| `backend_ecr_repository_url`  | `module.todo_service.backend_ecr_repository_url`  |
 | `frontend_ecr_repository_url` | `module.todo_service.frontend_ecr_repository_url` |
 
 ---
@@ -109,11 +111,11 @@ For local validation (Steps 1–2), use `terraform init -backend=false` to skip 
 
 ## Acceptance Criteria
 
-| ID | Requirement |
-|----|-------------|
+| ID     | Requirement                                                                               |
+| ------ | ----------------------------------------------------------------------------------------- |
 | FR-1.1 | `infra/stacks/dev/main.tf` calls the `slalom-terraform-pe-lab-ecs-app` module at `v1.0.4` |
-| FR-1.2 | Stack sets `environment`, `create_networking`, and `alb_ingress_cidr` |
-| FR-1.3 | `terraform validate` and `tflint` pass with no errors |
-| FR-1.4 | `checkov` reports 0 HIGH severity findings on the stack |
-| FR-1.5 | Stack outputs `service_url` and `cluster_name` from the module |
-| FR-1.6 | `AWS_ROLE_ARN` secret is configured in repo settings |
+| FR-1.2 | Stack sets `environment`, `create_networking`, and `alb_ingress_cidr`                     |
+| FR-1.3 | `terraform validate` and `tflint` pass with no errors                                     |
+| FR-1.4 | `checkov` reports 0 HIGH severity findings on the stack                                   |
+| FR-1.5 | Stack outputs `service_url` and `cluster_name` from the module                            |
+| FR-1.6 | `AWS_ROLE_ARN` secret is configured in repo settings                                      |
