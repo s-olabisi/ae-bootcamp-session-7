@@ -8,7 +8,7 @@
 
 ## Service Context
 
-<!-- Copilot: summarize the tech stack (Node.js version, test framework, IaC tool) that CI must validate (from docs/project-overview.md) -->
+This todo service backend runs on **Node.js 20** with **Express 4**, uses **Jest** for testing (≥80% coverage required), and is provisioned via **Terraform >= 1.5** (AWS provider ~> 5.0) on ECS Fargate. CI must validate: npm lint/test, Terraform validate/plan/security-scan (checkov), and Docker image builds for both backend and frontend.
 
 ## Reusable Workflow (`golden-path-ci.yml`)
 
@@ -46,11 +46,11 @@
 
 ## Acceptance Criteria (from docs/functional-requirements.md)
 
-| ID | Requirement |
-|---|---|
-| FR-2.1 | Reusable workflow at `.github/workflows/golden-path-ci.yml` uses `on: workflow_call` |
-| FR-2.2 | Reusable workflow includes jobs: `lint`, `test`, `security-scan`, `terraform-plan` |
-| FR-2.3 | `test` job fails if Jest coverage falls below 80% |
+| ID     | Requirement                                                                             |
+| ------ | --------------------------------------------------------------------------------------- |
+| FR-2.1 | Reusable workflow at `.github/workflows/golden-path-ci.yml` uses `on: workflow_call`    |
+| FR-2.2 | Reusable workflow includes jobs: `lint`, `test`, `security-scan`, `terraform-plan`      |
+| FR-2.3 | `test` job fails if Jest coverage falls below 80%                                       |
 | FR-2.4 | Caller workflow at `.github/workflows/todo-service-ci.yml` adopts the reusable workflow |
-| FR-2.5 | All workflows use `permissions:` blocks with least privilege |
-| FR-2.6 | CI runs on `push` to `main` and on all pull requests |
+| FR-2.5 | All workflows use `permissions:` blocks with least privilege                            |
+| FR-2.6 | CI runs on `push` to `main` and on all pull requests                                    |
